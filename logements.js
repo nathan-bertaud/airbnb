@@ -25,42 +25,6 @@ var LOGEMENTS = [
   },
 
   {
-    id:   'bascans',
-    e:    '💦',
-    n:    'Chez Bascans — Fermette jacuzzi & piscine',
-    note: '⭐ Très bien noté',
-    cap:  '6 pers · 3 chambres',
-    px:   'Sur demande',
-    d:    'Fermette rénovée, salon 75 m², plancha. 3 chambres dressing + TV au plafond. Terrasse jacuzzi + piscine 2 bassins + fibre.',
-    t:    ['Jacuzzi', 'Piscine', 'Haut de gamme'],
-    url:  'https://www.airbnb.fr/rooms/49245641',
-  },
-
-  {
-    id:   'montaigu',
-    e:    '🪵',
-    n:    'Le Montaigu et son Jacuzzi',
-    note: '⭐ 4,85 · 315 avis',
-    cap:  '4 pers · 2 chambres',
-    px:   '~160€/nuit',
-    d:    'Chalet bois avec jacuzzi en terrasse, vue imprenable sur les Pyrénées et la ville. Équipements neufs, parking sur place.',
-    t:    ['Jacuzzi', 'Vue montagne', 'Top avis'],
-    url:  'https://www.airbnb.fr/rooms/47574122',
-  },
-
-  {
-    id:   'tucou',
-    e:    '🌄',
-    n:    'Le Tucou et son Jacuzzi',
-    note: '⭐ Bien noté',
-    cap:  '6 pers · 3 chambres',
-    px:   '~155€/nuit',
-    d:    'Chalet avec vue panoramique sur Bagnères et les Pyrénées. Jacuzzi privatif, ambiance cosy et authentique.',
-    t:    ['Jacuzzi', 'Vue panoramique'],
-    url:  'https://www.airbnb.fr/rooms/49926156',
-  },
-
-  {
     id:   'bergerie',
     e:    '🏔️',
     n:    'Havre de paix pyrénéen — Bergerie de Charlotte',
