@@ -180,6 +180,7 @@
   .btn-vote:hover   { background: var(--bg2); }
   .btn-vote:active  { transform: scale(.97); }
   .btn-vote.voted   { background: var(--bg-info); color: var(--info); border-color: var(--b-info); }
+  .btn-vote.voted:hover { background: var(--bg-err); color: var(--err); border-color: #f09595; }
   .btn-vote:disabled { opacity: .4; cursor: default; transform: none; }
 
   /* Classement */
@@ -264,6 +265,9 @@ var LOGEMENTS = [
   { id:'bascans',  e:'💦', n:'Chez Bascans — Fermette jacuzzi & piscine',  note:'⭐ Très bien noté',       cap:'6 pers · 3 chambres', px:'Sur demande', d:'Fermette rénovée, salon 75 m², plancha. 3 chambres dressing + TV au plafond. Terrasse jacuzzi + piscine 2 bassins + fibre.',       t:['Jacuzzi','Piscine','Haut de gamme'],  url:'https://www.airbnb.fr/rooms/49245641' },
   { id:'montaigu', e:'🪵', n:'Le Montaigu et son Jacuzzi',                 note:'⭐ 4,85 · 315 avis',      cap:'4 pers · 2 chambres', px:'~160€/nuit',  d:'Chalet bois avec jacuzzi en terrasse, vue imprenable sur les Pyrénées et la ville. Équipements neufs, parking sur place.',          t:['Jacuzzi','Vue montagne','Top avis'],  url:'https://www.airbnb.fr/rooms/47574122' },
   { id:'tucou',    e:'🌄', n:'Le Tucou et son Jacuzzi',                    note:'⭐ Bien noté',             cap:'6 pers · 3 chambres', px:'~155€/nuit',  d:'Chalet avec vue panoramique sur Bagnères et les Pyrénées. Jacuzzi privatif, ambiance cosy et authentique.',                         t:['Jacuzzi','Vue panoramique'],          url:'https://www.airbnb.fr/rooms/49926156' },
+  { id:'bergerie', e:'🏔️', n:'Havre de paix pyrénéen — Bergerie de Charlotte', note:'⭐ 4,63 · 60 avis',               cap:'9 pers · 4 chambres', px:'Sur demande', d:'Ancienne bergerie rénovée à 850 m d\'altitude. Vue imprenable sur les montagnes, salon avec poêle à granulés et cheminée, jardin avec BBQ et plancha.', t:['Vue montagne','Jardin BBQ','Bergerie rénovée'], url:'https://www.airbnb.fr/rooms/14564151' },
+  { id:'foret',    e:'🌲', n:'À l\'orée de la forêt — Gîte 3★ Sylvain',        note:'⭐ 4,95 · 146 avis · Coup de cœur', cap:'8 pers · 4 chambres', px:'Sur demande', d:'Gîte classé 3 étoiles à Fréchendets, 650 m d\'altitude. Vue exceptionnelle sur les Baronnies, grande baie vitrée sur terrasse BBQ. 15 min de Bagnères.', t:['Coup de cœur','Superhost','Vue panoramique'], url:'https://www.airbnb.fr/rooms/42511920' },
+  { id:'soulan',   e:'♨️', n:'Ferme de Soulan — Gîte Mouflon & Spa',            note:'⭐ 5,0 · 8 avis',                  cap:'10 pers · 4 chambres', px:'Sur demande', d:'Ancienne ferme du XVIIIe s. à 1280 m d\'altitude, Saint-Lary-Soulan. Spa extérieur privatif, terrasse panoramique sur la vallée. À 5 min des pistes de ski.', t:['Spa/Jacuzzi','Vue montagne','Proche ski'], url:'https://www.airbnb.fr/rooms/707709516821706548' },
 ];
 
 var DB = 'https://airbnb-f3ec8-default-rtdb.europe-west1.firebasedatabase.app';
@@ -315,7 +319,7 @@ function render() {
             '<div class="bar-bg"><div class="bar-fg" style="width:' + pct + '%"></div></div>' +
             '<div class="voters">' + dp + '</div>' +
           '</div>' +
-          '<button class="btn-vote' + (vd ? ' voted' : '') + '"' + (ready ? '' : ' disabled') + ' onclick="doVote(\'' + l.id + '\')">' +
+          '<button class="btn-vote' + (vd ? ' voted' : '') + '"' + (ready ? '' : ' disabled') + ' onclick="' + (vd ? 'doUnvote' : 'doVote') + '(\'' + l.id + '\')">' +
             (vd ? '✓ Voté' : 'Je vote') +
           '</button>' +
         '</div>' +
@@ -353,6 +357,27 @@ async function poll() {
     setSync('err', 'Erreur réseau');
   }
   setTimeout(poll, 4000);
+}
+
+async function doUnvote(id) {
+  var p = prenom();
+  if (!p) { toast('Entre ton prénom !'); document.getElementById('pi').focus(); return; }
+  if (!ready) { toast('Connexion en cours...'); return; }
+  var pl = p.toLowerCase();
+  var obj = votes[id] || {};
+  var key = Object.keys(obj).find(function(k){ return obj[k].toLowerCase() === pl; });
+  if (!key) { toast('Vote introuvable.'); return; }
+  delete votes[id][key];
+  render();
+  try {
+    var r = await fetch(DB + '/votes/' + id + '/' + key + '.json', { method: 'DELETE' });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    toast('Vote annulé pour ' + p + '.');
+  } catch(e) {
+    toast('Erreur réseau, réessaie.');
+    votes[id][key] = p;
+    render();
+  }
 }
 
 async function doVote(id) {
